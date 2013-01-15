@@ -34,8 +34,8 @@ func main() {
 	gl.Disable(gl.DEPTH_TEST)
 	gl.Enable(gl.TEXTURE_2D)
 	gl.ClearColor(0.0, 0.0, 0.0, 1.0)
-	InitHARPDARP()
-	InitHARPDARPTHESECOND()
+	InitResources()
+	InitWorld()
 
 	for Running {
 		if (time.Since(dt).Nanoseconds() / 1000000) > 15 {
