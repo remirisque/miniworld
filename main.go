@@ -7,15 +7,14 @@ import (
 )
 
 const (
-	GridHeight = 30
-	GridWidth  = 40
+	GridHeight = 15
+	GridWidth  = 20
 )
 
 var Running = true
+var DT = time.Now()
 
 func main() {
-	dt := time.Now()
-
 	glfw.Init()
 	defer glfw.Terminate()
 
@@ -29,33 +28,33 @@ func main() {
 
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadIdentity()
-	gl.Ortho(0, 40, 0, 30, -1, 1)
+	gl.Ortho(0, GridWidth, GridHeight, 0, -1, 1)
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.Disable(gl.DEPTH_TEST)
 	gl.Enable(gl.TEXTURE_2D)
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
 	gl.ClearColor(0.0, 0.0, 0.0, 1.0)
-	InitResources()
-	InitWorld()
+	initResources()
+	initWorld()
 
 	for Running {
-		if (time.Since(dt).Nanoseconds() / 1000000) > 15 {
-			dt = time.Now()
+		if (time.Since(DT).Nanoseconds() / 1000000) > 15 { //don't loop faster than every 15ms
+			DT = time.Now()
 			gl.Clear(gl.COLOR_BUFFER_BIT)
+			player.update()
 			renderScene()
 			glfw.SwapBuffers()
 		}
 	}
 }
 
-func inputCallback(key int, state int) {
-	if key == glfw.KeyEsc && state == glfw.KeyPress {
-		Running = false
-	}
-}
-
 func renderScene() {
-	for idx := 0; idx < len(World.Grid); idx++ {
-		x, y := OffsetToCoord(idx)
-		RenderTile(float32(x), float32(y), World.Grid[idx].Tex)
+	for idx := 0; idx < len(world.grid); idx++ {
+		x, y := offsetToCoord(idx)
+		renderTile(float32(x), float32(y), world.grid[idx].texture)
 	}
+	//render player
+	renderTile(float32(player.x), float32(player.y), player.texture)
 }
